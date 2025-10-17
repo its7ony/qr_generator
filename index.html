@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ important for mobile devices -->
+  <title>Free QR Code Generator</title>
+  <style>
+    /* ---------- GENERAL STYLES ---------- */
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+      background: #f2f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* ---------- FORM STYLES ---------- */
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #444;
+    }
+
+    input, select, textarea, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      border: none;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #151515;
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+
+    /* ---------- QR CONTAINER ---------- */
+    #qrcode {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* ---------- RESPONSIVE DESIGN ---------- */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      form {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      input, select, textarea, button {
+        font-size: 14px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      form {
+        max-width: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Code Generator</h1>
+
+  <!-- QR form -->
+  <form onsubmit="event.preventDefault(); generateQR();">
+    <label for="type">Content type:</label>
+    <select id="type">
+      <option value="url">URL</option>
+      <option value="text">Text</option>
+      <option value="email">Email</option>
+      <option value="tel">Phone</option>
+      <option value="sms">SMS</option>
+      <option value="vcard">vCard</option>
+    </select>
+
+    <textarea id="input" rows="5" placeholder="Enter your content here..."></textarea>
+
+    <button type="submit">Generate QR Code</button>
+  </form>
+
+  <div id="qrcode"></div>
+
+  <!-- QRCode.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <script>
+    let qrcode;
+
+    /**
+     * Generates a QR code based on the selected content type and user input.
+     */
+    function generateQR() {
+      const type = document.getElementById("type").value;
+      const input = document.getElementById("input").value.trim();
+      let content = "";
+
+      // Determine the content format based on the selected type
+      switch (type) {
+        case "url":
+        case "text":
+          content = input;
+          break;
+        case "email":
+          content = `mailto:${input}`;
+          break;
+        case "tel":
+          content = `tel:${input}`;
+          break;
+        case "sms":
+          content = `sms:${input}`;
+          break;
+        case "vcard":
+          content = `BEGIN:VCARD\nVERSION:3.0\n${input}\nEND:VCARD`;
+          break;
+        default:
+          content = input;
+      }
+
+      // Clear the previous QR code before generating a new one
+      document.getElementById("qrcode").innerHTML = "";
+
+      // Create a new QR code instance
+      qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: content,
+        width: 256,
+        height: 256,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+  </script>
+</body>
+</html>
